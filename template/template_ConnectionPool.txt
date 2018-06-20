@@ -1,0 +1,44 @@
+<?php
+include_once(dirname(__FILE__) . "/../lib/log4php/Logger.php");
+class [%filePrefix%]ConnectionPool
+{
+    protected static $logger = null;
+
+    protected static $objectInstance = null;
+    protected static $dbUser = "[%dbUser%]";
+    protected static $dbPassword = "[%dbPassword%]";
+    protected static $connectionMethod = "[%connectionMethod%]";
+    protected static $dbHost = "[%dbHost%]";
+    protected static $dbPort = "[%dbPort%]";
+    protected static $dbInstanceName = "[%dbInstanceName%]";
+
+
+    public static function staticInit(){
+        Logger::configure(dirname(__FILE__) . '/../log4php.xml');
+        self::$logger = Logger::getLogger(__FILE__);
+    }
+
+    protected function [%filePrefix%]ConnectionPool(){}
+
+    public static function getInstance(){
+        if (self::$objectInstance == null){ self::$objectInstance = new [%filePrefix%]ConnectionPool(); }
+        return self::$objectInstance;
+    }
+
+    public function getConnection(){
+        $conn = NewADOConnection(self::$connectionMethod);
+        $trialCount = 3;
+        while ($trialCount > 0){
+            $conn->Connect(self::$dbHost, self::$dbUser, self::$dbPassword, self::$dbInstanceName);
+            if ($conn->_connectionID) break;
+            $trialCount--;
+            self::$logger->info("getConnection() Retry (" . $trialCount . " left)");
+        }
+        $conn->Execute("set names 'utf8'");
+        return $conn;
+    }
+
+    public function returnConnection($conn){ if ($conn != null){ $conn->close(); } }
+}
+[%filePrefix%]ConnectionPool::staticInit();
+?>

@@ -1,0 +1,68 @@
+<configuration xmlns="http://logging.apache.org/log4php/">
+    <appender name="applicationlog" class="LoggerAppenderDailyFile">
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%d{Y-m-d H:i:s.u} [%t] %c %-5p %m%n" />
+        </layout>
+        <param name="file" value="[%loggerPath%]/application-%s.log" />
+        <param name="datePattern" value="Y-m-d" />
+    </appender>
+    <appender name="exceptionlog" class="LoggerAppenderDailyFile">
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%d{Y-m-d H:i:s.u} [%t] %c %-5p %m%n" />
+        </layout>
+        <param name="file" value="[%loggerPath%]/applicationexception-%s.log" />
+        <param name="datePattern" value="Y-m-d" />
+    </appender>
+    <appender name="batchlog" class="LoggerAppenderDailyFile">
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%d{Y-m-d H:i:s.u} [%t] %c %-5p %m%n" />
+        </layout>
+        <param name="file" value="[%loggerPath%]/batchlog-%s.log" />
+        <param name="datePattern" value="Y-m-d" />
+    </appender>
+    <appender name="browserlog" class="LoggerAppenderDailyFile">
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%d{Y-m-d H:i:s.u} [%t] %c %-5p %m%n" />
+        </layout>
+        <param name="file" value="[%loggerPath%]/browserlog-%s.log" />
+        <param name="datePattern" value="Y-m-d" />
+    </appender>
+    <appender name="contingencylog" class="LoggerAppenderDailyFile">
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%d{Y-m-d H:i:s.u} [%t] %c %-5p %m%n" />
+        </layout>
+        <param name="file" value="[%loggerPath%]/contingency-%s.log" />
+        <param name="datePattern" value="Y-m-d" />
+    </appender>
+	 <appender name="historylog" class="LoggerAppenderDailyFile">
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%d{Y-m-d H:i:s.u} [%t] %c %-5p %m%n" />
+        </layout>
+        <param name="file" value="[%loggerPath%]/history-%s.log" />
+        <param name="datePattern" value="Y-m-d" />
+    </appender>
+    <root>
+        <level value="DEBUG" />
+        <appender_ref ref="applicationlog" />
+    </root>
+    <logger name="ExceptionLog" additivity="false">
+        <level value="TRACE" />
+        <appender_ref ref="exceptionlog" />
+    </logger>
+	<logger name="HistoryLog" additivity="false">
+        <level value="TRACE" />
+        <appender_ref ref="historylog" />
+    </logger>
+    <logger name="BatchLog" additivity="false">
+        <level value="TRACE" />
+        <appender_ref ref="batchlog" />
+    </logger>
+    <logger name="BrowserLog" additivity="false">
+        <level value="TRACE" />
+        <appender_ref ref="browserlog" />
+    </logger>
+    <logger name="ContingencyLog" additivity="false">
+        <level value="TRACE" />
+        <appender_ref ref="contingencylog" />
+    </logger>
+</configuration>

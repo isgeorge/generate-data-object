@@ -1,0 +1,39 @@
+<?php
+include_once(dirname(__FILE__) . "/../lib/log4php/Logger.php");
+class [%filePrefix%]ConnectionPool
+{
+    protected static $logger = null;
+
+    protected static $objectInstance = null;
+    protected static $dbUser = "[%dbUser%]";
+    protected static $dbPassword = "[%dbPassword%]";
+    protected static $connectionMethod = "[%connectionMethod%]";
+    protected static $dbHost = "[%dbHost%]";
+    protected static $dbPort = "[%dbPort%]";
+    protected static $dbInstanceName = "[%dbInstanceName%]";
+
+
+    public static function staticInit(){
+        Logger::configure(dirname(__FILE__) . '/../log4php.xml');
+        self::$logger = Logger::getLogger(__FILE__);
+    }
+
+    protected function [%filePrefix%]ConnectionPool(){}
+
+    public static function getInstance(){
+        if (self::$objectInstance == null){ self::$objectInstance = new [%filePrefix%]ConnectionPool(); }
+        return self::$objectInstance;
+    }
+
+    public function getConnection(){
+        $dsn = 'odbc:DRIVER={ODBC Driver 13 for SQL Server};SERVER='.self::$dbHost.';DATABASE='.self::$dbInstanceName.';'; 
+		$conn = new PDO($dsn, self::$dbUser, self::$dbPassword); 
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
+
+        return $conn;
+    }
+
+    public function returnConnection($conn){ if ($conn != null){ $conn=null; } }
+}
+[%filePrefix%]ConnectionPool::staticInit();
+?>

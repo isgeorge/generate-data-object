@@ -1,0 +1,151 @@
+<?php
+abstract class GenericDO
+{
+    protected $loaded = false;
+    protected $changed = false;
+    protected $newRecord = true;
+
+    public static function staticInit(){}
+
+    protected function getConnectionPool(){ return null; }
+    public static function houseKeeping(){}
+	
+    public function isLoaded(){ return $this->loaded; }
+    public function isChanged(){ return $this->changed; }
+    public function isNewRecord(){ return $this->newRecord; }
+	
+    public function saveToDB($dbcon=null){
+        $con = null;
+
+        try{
+			$con=$dbcon;
+			if($con==null){
+				$conPool = $this->getConnectionPool();
+				$con=$conPool->getConnection();
+			}
+            if ($con == null){ throw new Exception("Can't get connection"); }
+
+            $this->saveToDBWithConnection($con);
+            $this->changed = false;
+
+			if($dbcon==null){ if($con != null){ $conPool->returnConnection($con); } }
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function saveToDBWithConnection($conn){
+		
+        if ($this->newRecord){
+            $this->insertToDBWithConnection($conn);
+        }else{
+            $this->updateToDBWithConnection($conn);
+        }
+    }
+
+    public function deleteFromDB($dbcon=null){
+        $deletedCount = 0;
+
+		$con = null;
+
+        try{
+			$con=$dbcon;
+			if($con==null){
+				$conPool = $this->getConnectionPool();
+				$con=$conPool->getConnection();
+			}
+            if ($con == null){ throw new Exception("Can't get connection"); }
+
+            $deletedCount = $this->deleteFromDBWithConnection($con);
+
+            $this->changed = false;
+
+			if($dbcon==null){ if($con != null){ $conPool->returnConnection($con); } }
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
+
+        return $deletedCount;
+    }
+	
+	public function ClearFromDB($dbcon=null){
+        $deletedCount = 0;
+
+		$con = null;
+
+        try{
+			$con=$dbcon;
+			if($con==null){
+				$conPool = $this->getConnectionPool();
+				$con=$conPool->getConnection();
+			}
+            if ($con == null){ throw new Exception("Can't get connection"); }
+
+            $deletedCount = $this->ClearData($con);
+
+            $this->changed = false;
+			
+			if($dbcon==null){ if($con != null){ $conPool->returnConnection($con); } }
+        }catch (Exception $e){
+            throw new DOException($e->getMessage());
+        }
+
+        return $deletedCount;
+    }
+	
+    public function loadFromDB($dbcon=null){
+       $con = null;
+
+        try{
+			$con=$dbcon;
+			if($con==null){
+				$conPool = $this->getConnectionPool();
+				$con=$conPool->getConnection();
+			}
+            if ($con == null){ throw new Exception("Can't get connection"); }
+
+            $this->loadFromDBWithConnection($con);
+
+			if($dbcon==null){ if($con != null){ $conPool->returnConnection($con); } }
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    protected function insertToDBWithConnection($conn){}
+    protected function updateToDBWithConnection($conn){}
+    public function deleteFromDBWithConnection($conn){ return 0; }
+    public function loadFromDBWithConnection($con){}
+
+    public function resetObject(){
+        $this->loaded = false;
+        $this->changed = false;
+        $this->newRecord = true;
+    }
+
+    public function toString(){
+        return "|GenericDO.toString"
+        . "|\t" . "loaded" . ": |" . $this->loaded 
+        . "|\t" . "changed" . ": |" . $this->changed 
+        . "|\t" . "newRecord" . ": |" . $this->newRecord 
+        . "|";
+    }
+
+    public function strToHex($string){
+        $hex='';
+        for ($i=0; $i < strlen($string); $i++){
+            $newByte = dechex(ord($string[$i]));
+            if (strlen($newByte) == 1){ $newByte = "0" . $newByte; }
+            $hex .= $newByte;
+        }
+        return $hex;
+    }
+
+    public function hexToStr($hex){
+        $string='';
+        for ($i=0; $i < strlen($hex)-1; $i+=2){ $string .= chr(hexdec($hex[$i].$hex[$i+1])); }
+        return $string;
+    }
+}
+GenericDO::staticInit();
+?>

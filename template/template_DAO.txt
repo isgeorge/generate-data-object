@@ -1,0 +1,27 @@
+<?php
+include_once(dirname(__FILE__)."/../lib/adodb/adodb.inc.php");
+include_once(dirname(__FILE__).'/../dao/[%filePrefix%]ConnectionPool.php');
+include_once(dirname(__FILE__).'/../dao/GenericDO.php');
+
+abstract class [%filePrefix%]DAO extends GenericDO
+{
+    public static function staticInit(){}
+
+    public static function acquireConnectionPool(){
+        $result = null;
+
+        try{
+            $result = [%filePrefix%]ConnectionPool::getInstance();
+        }catch (Exception $e){
+        }
+        return $result;
+    }
+
+    public function getConnectionPool(){
+        $result = null;
+        $result = [%filePrefix%]DAO::acquireConnectionPool();
+        return $result;
+    }
+}
+[%filePrefix%]DAO::staticInit();
+?>
