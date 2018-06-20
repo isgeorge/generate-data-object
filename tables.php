@@ -1,0 +1,11 @@
+<?php
+	$todoTableArray=array(
+		"table_name_1",
+		"table_name_2",
+		"table_name_3",
+		"table_name_4",
+	);
+	$skipTableArray=array(
+		"table_name_9",
+	);
+?>
